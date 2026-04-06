@@ -1,32 +1,24 @@
 # Professor Room Tracker 📍
 
-A React Native (Expo) app that lets professors update their current room location by scanning QR codes. Built for campus use — scan a room's QR code and the location is instantly updated in the database.
+A React Native (Expo) app for professors to log in, set their lecture schedule, and scan room QR codes to update their live location — stored in Firebase Realtime Database.
 
 ---
 
 ## Features
 
-- **QR Code Scanning** — Scan room QR codes to update a professor's location
-- **Professor Profiles** — Add and manage multiple professor accounts
-- **Room Assignments** — View all current professor–room assignments at a glance
+- **Login** — Each professor signs in with their email & password
+- **QR Code Scanning** — Scan a room's QR code to instantly update current location
+- **Schedule Manager** — Set which room each of your 6 lectures is in
+- **Room Assignments** — Live view of all professors and their current rooms + schedules
+- **Add Professors** — Admin can create new professor accounts from the Settings tab
 - **Dark Mode** — Toggleable light/dark theme
-- **Firebase Integration** — Real-time updates via Firebase Realtime Database
-- **Cross-platform** — Runs on iOS, Android, and Web
-
----
-
-## Screenshots
-
-| Scanner | Professors | Records | Settings |
-|---------|------------|---------|----------|
-| Scan QR to update room | Manage professor list | View all assignments | Stats & dark mode |
+- **Cross-platform** — iOS, Android, and Web
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-
 - [Node.js](https://nodejs.org/) v18+
 - [Expo CLI](https://docs.expo.dev/get-started/installation/)
 
@@ -40,59 +32,72 @@ npm install -g expo-cli
 git clone https://github.com/YOUR_USERNAME/professor-room-tracker.git
 cd professor-room-tracker
 npm install
-```
-
-### Running the App
-
-```bash
-# Start the Expo dev server
 npm start
-
-# Run on Android
-npm run android
-
-# Run on iOS
-npm run ios
-
-# Run on Web
-npm run web
 ```
 
 ---
 
-## Firebase Setup
+## Firebase Database Structure
 
-This app uses **Firebase Realtime Database** to store professor room assignments.
-
-1. Go to [Firebase Console](https://console.firebase.google.com/) and create a project
-2. Enable **Realtime Database**
-3. Update the `firebaseDB` URL in `src/App.js`:
-
-```js
-const firebaseDB = 'https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com';
-```
-
-### Database Structure
+Each professor is stored as an object (not a plain string):
 
 ```json
 {
   "Professor": {
-    "dr_sharma": "G104",
-    "prof_mehta": "B201"
+    "dr_kp": {
+      "name": "Dr. K.P.",
+      "email": "kp@college.edu",
+      "password": "yourpassword",
+      "current_room": "B504",
+      "schedule": {
+        "lecture_1": "ECEB",
+        "lecture_2": "",
+        "lecture_3": "ELCEA",
+        "lecture_4": "CSITA",
+        "lecture_5": "",
+        "lecture_6": ""
+      }
+    }
   }
 }
 ```
+
+### Migrating existing professors
+
+Your current flat structure (`dr_kp: "B504"`) needs to be converted. Run this once per professor in your Firebase console or via a script:
+
+```js
+fetch('https://campusguide-32721-default-rtdb.firebaseio.com/Professor/dr_kp.json', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: "Dr. K.P.",
+    email: "kp@college.edu",
+    password: "set-a-password",
+    current_room: "B504",
+    schedule: {
+      lecture_1: "ECEB", lecture_2: "", lecture_3: "ELCEA",
+      lecture_4: "CSITA", lecture_5: "", lecture_6: ""
+    }
+  })
+})
+```
+
+Repeat for: `dr_khan`, `dr_kp`, `dr_manisha`, `dr_mohit`, `dr_namit`, `dr_sachin`, `dr_sharma`
 
 ---
 
 ## How It Works
 
-1. A professor opens the app and selects their profile from the **Scanner** tab
-2. They tap **Scan Room QR Code** to open the camera
-3. Scanning a room's QR code sends a `PATCH` request to Firebase with the new room code
-4. The **Records** tab shows all current professor–room assignments in real time
-
-> **Test Mode:** In the scanner modal, you can manually type a room code (e.g. `G104`) and tap **Simulate Scan** to test without a physical QR code.
+| Step | Action |
+|------|--------|
+| 1 | Professor opens app → enters email + password → taps Sign In |
+| 2 | App fetches `/Professor.json` and matches credentials |
+| 3 | After login, **Schedule tab** lets professor set rooms for lectures 1–6 |
+| 4 | **Scanner tab** shows today's schedule + a big Scan button |
+| 5 | Scanning a QR code does a `PATCH` to update `current_room` in Firebase |
+| 6 | **Records tab** shows all professors, their current room, and full schedule |
+| 7 | **Settings tab** → admins can add new professors with name/email/password |
 
 ---
 
@@ -101,7 +106,7 @@ const firebaseDB = 'https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com';
 ```
 professor-room-tracker/
 ├── src/
-│   └── App.js          # Main application component
+│   └── App.js        # Full app: Login, Scanner, Schedule, Records, Settings
 ├── package.json
 ├── .gitignore
 └── README.md
@@ -113,10 +118,10 @@ professor-room-tracker/
 
 | Technology | Purpose |
 |------------|---------|
-| React Native + Expo | Cross-platform mobile framework |
-| React Navigation | Bottom tab navigation |
-| Firebase RTDB | Real-time database |
-| Expo Vector Icons | Material Icons |
+| React Native + Expo | Cross-platform mobile |
+| React Navigation (Bottom Tabs) | Tab navigation |
+| Firebase Realtime Database | Live data storage |
+| Expo Vector Icons (Material) | Icons |
 | React Native Safe Area Context | Safe area insets |
 
 ---

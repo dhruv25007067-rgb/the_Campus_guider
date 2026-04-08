@@ -47,13 +47,13 @@ Each professor is stored as an object (not a plain string):
     "dr_kp": {
       "name": "Dr. K.P.",
       "email": "kp@college.edu",
-      "password": "yourpassword",
+      "password": "Kp@123",
       "current_room": "B504",
       "schedule": {
-        "lecture_1": "ECEB",
+        "lecture_1": "ECE B",
         "lecture_2": "",
-        "lecture_3": "ELCEA",
-        "lecture_4": "CSITA",
+        "lecture_3": "ELCE A",
+        "lecture_4": "CSIT A",
         "lecture_5": "",
         "lecture_6": ""
       }
@@ -76,8 +76,8 @@ fetch('https://campusguide-32721-default-rtdb.firebaseio.com/Professor/dr_kp.jso
     password: "set-a-password",
     current_room: "B504",
     schedule: {
-      lecture_1: "ECEB", lecture_2: "", lecture_3: "ELCEA",
-      lecture_4: "CSITA", lecture_5: "", lecture_6: ""
+      lecture_1: "ECE B", lecture_2: "", lecture_3: "ELCE A",
+      lecture_4: "CSIT A", lecture_5: "", lecture_6: ""
     }
   })
 })
